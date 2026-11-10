@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡La Gran Aventura de la Naturaleza en Venezuela! 🇻🇪✨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Fredoka', 'Nunito', sans-serif;
+            background-color: #F0FDF4;
+            color: #1E293B;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 14px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #DCFCE7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22C55E;
+            border-radius: 10px;
+            border: 3px solid #DCFCE7;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-4deg); }
+            50% { transform: rotate(4deg); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.6)); }
+            50% { filter: drop-shadow(0 0 25px rgba(250, 204, 21, 0.9)); }
+        }
+
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .animate-bounce-subtle { animation: bounce-subtle 2s ease-in-out infinite; }
+        .animate-wiggle { animation: wiggle 0.5s ease-in-out infinite; }
+        .animate-glow { animation: pulse-glow 3s infinite; }
+
+        /* Custom Card Hover */
+        .eco-card {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .eco-card:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+
+        /* Speech Bubble */
+        .bubble {
+            position: relative;
+            background: #FFFFFF;
+            border-radius: 2rem;
+            border: 4px solid #FACC15;
+        }
+        .bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 40px;
+            border-width: 20px 20px 0;
+            border-style: solid;
+            border-color: #FFFFFF transparent;
+            display: block;
+            width: 0;
+        }
+        .bubble:before {
+            content: '';
+            position: absolute;
+            bottom: -26px;
+            left: 38px;
+            border-width: 22px 22px 0;
+            border-style: solid;
+            border-color: #FACC15 transparent;
+            display: block;
+            width: 0;
+        }
+
+        /* Star rating active */
+        .star-gold {
+            color: #FBBF24;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+    </style>
+</head>
+<body class="bg-emerald-50 selection:bg-yellow-300 selection:text-emerald-900">
+
+    <!-- Audio Effects (Efectos de sonido de juego únicamente) -->
+    <script>
+        const playSound = (type) => {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'pop') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.1);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(150, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'animal') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.2);
+                }
+            } catch(e) { console.log('Audio error:', e); }
+        };
+    </script>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b-4 border-yellow-400 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="scrollToSection('hero')">
+                <span class="text-4xl animate-bounce-subtle">🌿</span>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black text-emerald-700 leading-none">Mi Venezuela</h1>
+                    <span class="text-xs md:text-sm font-bold text-amber-500 uppercase tracking-wider">¡Naturaleza Mágica!</span>
+                </div>
+            </div>
+            
+            <nav class="flex items-center gap-2 flex-wrap justify-end">
+                <button onclick="scrollToSection('que-es'); playSound('pop')" class="px-3 md:px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-full font-bold text-xs md:text-sm transition shadow-sm hover:scale-105">🏠 ¿Qué es?</button>
+                <button onclick="scrollToSection('ecosistemas'); playSound('pop')" class="px-3 md:px-4 py-2 bg-sky-100 hover:bg-sky-200 text-sky-800 rounded-full font-bold text-xs md:text-sm transition shadow-sm hover:scale-105">🗺️ Lugares</button>
+                <button onclick="scrollToSection('animales'); playSound('pop')" class="px-3 md:px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-full font-bold text-xs md:text-sm transition shadow-sm hover:scale-105">🐾 Amiguitos</button>
+                <button onclick="scrollToSection('mision'); playSound('pop')" class="px-3 md:px-4 py-2 bg-teal-100 hover:bg-teal-200 text-teal-800 rounded-full font-bold text-xs md:text-sm transition shadow-sm hover:scale-105">🛡️ Misión Secreta</button>
+                <button onclick="scrollToSection('quiz'); playSound('pop')" class="px-3 md:px-4 py-2 bg-pink-100 hover:bg-pink-200 text-pink-800 rounded-full font-bold text-xs md:text-sm transition shadow-sm hover:scale-105">⭐ Quiz</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION / BIENVENIDA -->
+    <section id="hero" class="relative min-h-[85vh] flex items-center justify-center pt-8 pb-16 overflow-hidden bg-gradient-to-b from-sky-300 via-emerald-200 to-emerald-50">
+        <!-- Sun & Clouds Background -->
+        <div class="absolute top-6 right-10 text-7xl md:text-9xl animate-glow select-none">☀️</div>
+        <div class="absolute top-12 left-10 text-5xl md:text-7xl opacity-80 animate-float select-none">☁️</div>
+        <div class="absolute top-28 right-1/4 text-4xl md:text-6xl opacity-70 animate-float select-none" style="animation-delay: 1.5s;">☁️</div>
+
+        <div class="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
+            
+            <!-- Hero Text & Character Speech -->
+            <div class="md:col-span-7 text-center md:text-left">
+                <!-- Speech Bubble -->
+                <div class="bubble p-5 md:p-6 mb-6 shadow-xl inline-block text-left animate-bounce-subtle">
+                    <p class="text-lg md:text-xl font-bold text-emerald-950">
+                        ¡Hola, amiguitos de primer grado! 👋<br>
+                        Soy <span class="text-amber-600 font-black underline">la profe Rafanny Santil </span> y seré tu guía en esta superaventura. ¡Vamos a descubrir la naturaleza de nuestra hermosa Venezuela!
+                    </p>
+                </div>
+
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-emerald-900 leading-tight tracking-tight mb-4 drop-shadow-sm">
+                    ¡Exploremos los Ecosistemas Mágicos!
+                </h1>
+                
+                <p class="text-lg md:text-2xl text-emerald-800 font-semibold mb-8">
+                    Un viaje lleno de animales, plantas sorprendentes, montañas frías, playas soleadas y selvas gigantes.
+                </p>
+
+                <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                    <button onclick="scrollToSection('que-es'); playSound('pop')" class="px-8 py-4 bg-yellow-400 hover:bg-yellow-300 text-amber-950 font-black text-xl rounded-2xl border-b-8 border-yellow-600 shadow-xl hover:scale-105 active:translate-y-2 transition flex items-center gap-3">
+                        <span>🚀 ¡Empezar la Aventura!</span>
+                    </button>
+                    <button onclick="scrollToSection('animales'); playSound('pop')" class="px-6 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xl rounded-2xl border-b-8 border-emerald-800 shadow-xl hover:scale-105 active:translate-y-2 transition flex items-center gap-2">
+                        <span>🦁 Conocer Animales</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chiri Graphic Character (SVG) -->
+            <div class="md:col-span-5 flex justify-center">
+                <div class="relative w-64 h-64 sm:w-80 sm:h-80 group">
+                    <div class="absolute inset-0 bg-yellow-300 rounded-full blur-2xl opacity-60 group-hover:opacity-90 transition"></div>
+                    
+                    <svg class="w-full h-full relative z-10 animate-float drop-shadow-2xl" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="65" cy="65" rx="14" ry="18" fill="#8D5B4C" />
+                        <ellipse cx="65" cy="65" rx="8" ry="11" fill="#D98A6C" />
+                        <ellipse cx="135" cy="65" rx="14" ry="18" fill="#8D5B4C" />
+                        <ellipse cx="135" cy="65" rx="8" ry="11" fill="#D98A6C" />
+                        
+                        <ellipse cx="100" cy="135" rx="75" ry="55" fill="#A0634C" />
+                        <ellipse cx="100" cy="140" rx="55" ry="35" fill="#B87358" />
+                        
+                        <path d="M 55 90 C 55 55, 145 55, 145 90 C 145 130, 55 130, 55 90 Z" fill="#B87358" />
+                        
+                        <path d="M 70 100 C 70 85, 130 85, 130 100 C 130 120, 70 120, 70 100 Z" fill="#8D5B4C" />
+                        <ellipse cx="88" cy="98" rx="5" ry="7" fill="#4A2E2B" />
+                        <ellipse cx="112" cy="98" rx="5" ry="7" fill="#4A2E2B" />
+                        
+                        <circle cx="75" cy="75" r="7" fill="#1E293B" />
+                        <circle cx="73" cy="73" r="2.5" fill="white" />
+                        <circle cx="125" cy="75" r="7" fill="#1E293B" />
+                        <circle cx="123" cy="73" r="2.5" fill="white" />
+
+                        <ellipse cx="65" cy="88" rx="7" ry="4" fill="#FF8A8A" opacity="0.8" />
+                        <ellipse cx="135" cy="88" rx="7" ry="4" fill="#FF8A8A" opacity="0.8" />
+                        
+                        <path d="M 92 110 Q 100 118 108 110" stroke="#4A2E2B" stroke-width="3" stroke-linecap="round" fill="none" />
+
+                        <path d="M 60 58 Q 100 45 140 58 L 135 48 Q 100 35 65 48 Z" fill="#FFD100" />
+                        <rect x="70" y="48" width="60" height="4" fill="#00247D" />
+                        <rect x="73" y="52" width="54" height="4" fill="#CF142B" />
+                        
+                        <path d="M 100 35 Q 115 20 125 30 Q 110 40 100 35 Z" fill="#22C55E" />
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 1: ¿QUÉ ES UN ECOSISTEMA? -->
+    <section id="que-es" class="py-16 bg-white relative">
+        <div class="max-w-5xl mx-auto px-4">
+            
+            <div class="text-center mb-12">
+                <span class="bg-yellow-200 text-amber-900 font-extrabold text-sm md:text-base px-4 py-2 rounded-full border-2 border-yellow-400 uppercase tracking-wide">
+                    💡 ¡Aprendamos Juntos!
+                </span>
+                <h2 class="text-3xl md:text-5xl font-black text-emerald-900 mt-4">
+                    ¿Qué es un Ecosistema? 🤔
+                </h2>
+            </div>
+
+            <!-- Analogy Container -->
+            <div class="bg-amber-50 rounded-3xl p-6 md:p-10 border-4 border-dashed border-amber-300 shadow-xl grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                
+                <div class="md:col-span-6 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-4xl">🏡</span>
+                        <h3 class="text-2xl font-bold text-amber-900">¡Es como una Casa Mágica!</h3>
+                    </div>
+                    
+                    <p class="text-lg md:text-xl text-slate-700 leading-relaxed">
+                        Un <strong>ecosistema</strong> es como una <strong>gran casa</strong> donde viven juntos las plantas 🌿, los animales 🐒, el agua 💧, el sol ☀️ y la tierra 🌱.
+                    </p>
+                    
+                    <p class="text-lg md:text-xl text-slate-700 leading-relaxed bg-white p-4 rounded-2xl border-2 border-amber-200">
+                        🤝 <strong>¡Todos son amigos y se ayudan!</strong> Las plantas dan comida y oxígeno, el agua calma la sed, y los animales cuidan las semillas.
+                    </p>
+                </div>
+
+                <!-- Interactive Visual Box -->
+                <div class="md:col-span-6 bg-gradient-to-br from-emerald-100 to-sky-100 p-6 rounded-2xl border-4 border-white shadow-inner">
+                    <h4 class="text-center font-black text-emerald-900 text-lg mb-4">✨ Toca los ingredientes del Ecosistema:</h4>
+                    
+                    <div class="grid grid-cols-2 gap-3 text-center">
+                        <button onclick="explainElement('Sol', '☀️ El Sol da luz y calor a las plantas para que puedan crecer fuertes.'); playSound('pop');" class="bg-white hover:bg-yellow-100 p-4 rounded-xl border-2 border-yellow-300 shadow hover:scale-105 transition">
+                            <span class="text-4xl block mb-1">☀️</span>
+                            <span class="font-bold text-amber-900 text-sm">El Sol</span>
+                        </button>
+                        <button onclick="explainElement('Agua', '💧 El Agua de los ríos y mares le da de beber a todos los animalitos.'); playSound('pop');" class="bg-white hover:bg-sky-100 p-4 rounded-xl border-2 border-sky-300 shadow hover:scale-105 transition">
+                            <span class="text-4xl block mb-1">💧</span>
+                            <span class="font-bold text-sky-900 text-sm">El Agua</span>
+                        </button>
+                        <button onclick="explainElement('Plantas', '🌳 Las Plantas limpian el aire y son el alimento de muchos animales.'); playSound('pop');" class="bg-white hover:bg-emerald-100 p-4 rounded-xl border-2 border-emerald-300 shadow hover:scale-105 transition">
+                            <span class="text-4xl block mb-1">🌿</span>
+                            <span class="font-bold text-emerald-900 text-sm">Las Plantas</span>
+                        </button>
+                        <button onclick="explainElement('Animales', '🐯 Los Animales viven en la naturaleza y ayudan a esparcir semillas.'); playSound('pop');" class="bg-white hover:bg-orange-100 p-4 rounded-xl border-2 border-orange-300 shadow hover:scale-105 transition">
+                            <span class="text-4xl block mb-1">🦜</span>
+                            <span class="font-bold text-orange-900 text-sm">Los Animales</span>
+                        </button>
+                    </div>
+
+                    <div id="element-desc" class="mt-4 p-3 bg-white rounded-xl text-center text-sm md:text-base font-bold text-emerald-900 min-h-[50px] flex items-center justify-center border-2 border-emerald-300">
+                        👇 ¡Toca un botón para ver qué hace!
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 2: ECOSISTEMAS MÁGICOS DE VENEZUELA -->
+    <section id="ecosistemas" class="py-16 bg-gradient-to-b from-emerald-50 via-sky-50 to-amber-50">
+        <div class="max-w-6xl mx-auto px-4">
+            
+            <div class="text-center mb-10">
+                <span class="bg-emerald-200 text-emerald-900 font-extrabold text-sm md:text-base px-4 py-2 rounded-full border-2 border-emerald-400">
+                    🗺️ ¡Lugares Fantásticos!
+                </span>
+                <h2 class="text-3xl md:text-5xl font-black text-emerald-950 mt-4">
+                    Los 5 Ecosistemas Mágicos de Venezuela 🇻🇪
+                </h2>
+                <p class="text-base md:text-xl text-slate-600 font-bold mt-2">
+                    ¡Haz clic en los botones para explorar cada lugar!
+                </p>
+
+                <!-- Interactive Filters -->
+                <div class="flex flex-wrap justify-center gap-2 md:gap-4 mt-6">
+                    <button onclick="filterEco('todos')" class="eco-filter-btn active-btn bg-emerald-600 text-white font-black px-5 py-2.5 rounded-full shadow border-b-4 border-emerald-800 text-sm md:text-base">✨ Todos los Ecosistemas</button>
+                    <button onclick="filterEco('selva')" class="eco-filter-btn bg-white text-emerald-800 font-black px-4 py-2.5 rounded-full shadow border-2 border-emerald-300 text-sm md:text-base">🌳 Selva</button>
+                    <button onclick="filterEco('playa')" class="eco-filter-btn bg-white text-sky-800 font-black px-4 py-2.5 rounded-full shadow border-2 border-sky-300 text-sm md:text-base">🏖️ Playa</button>
+                    <button onclick="filterEco('desierto')" class="eco-filter-btn bg-white text-amber-800 font-black px-4 py-2.5 rounded-full shadow border-2 border-amber-300 text-sm md:text-base">🏜️ Desierto</button>
+                    <button onclick="filterEco('andes')" class="eco-filter-btn bg-white text-blue-800 font-black px-4 py-2.5 rounded-full shadow border-2 border-blue-300 text-sm md:text-base">🏔️ Montaña</button>
+                    <button onclick="filterEco('llanos')" class="eco-filter-btn bg-white text-green-800 font-black px-4 py-2.5 rounded-full shadow border-2 border-green-300 text-sm md:text-base">🌾 Llanos</button>
+                </div>
+            </div>
+
+            <!-- CARDS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="eco-cards-container">
+                
+                <!-- CARD 1: SELVA AMAZÓNICA -->
+                <div class="eco-card eco-item selva bg-white rounded-3xl overflow-hidden border-4 border-emerald-300 shadow-xl flex flex-col">
+                    <div class="bg-gradient-to-r from-emerald-600 to-green-500 p-6 text-white text-center relative overflow-hidden">
+                        <span class="text-6xl block mb-2 animate-bounce-subtle">🌳</span>
+                        <h3 class="text-2xl font-black">La Selva Amazónica y Salto Ángel</h3>
+                        <span class="inline-block bg-emerald-800/60 text-xs px-3 py-1 rounded-full font-bold mt-1">¡El Pulmón Verde del Mundo!</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <p class="text-slate-700 text-base md:text-lg font-medium">
+                            Es un bosque gigante repleto de árboles altísimos 🌲. Llueve mucho y hace calor. ¡Tiene la caída de agua más alta del mundo: el Salto Ángel!
+                        </p>
+                        <div class="bg-emerald-50 p-4 rounded-2xl border-2 border-emerald-200">
+                            <span class="font-bold text-emerald-900 block text-sm">🐯 Habitantes y secretos:</span>
+                            <span class="text-emerald-800 font-bold">Aquí viven el Jaguar elegante, Guacamayas ruidosas y hermosas orquídeas.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: PLAYAS DE MORROCOY Y LOS ROQUES -->
+                <div class="eco-card eco-item playa bg-white rounded-3xl overflow-hidden border-4 border-sky-300 shadow-xl flex flex-col">
+                    <div class="bg-gradient-to-r from-sky-400 to-blue-500 p-6 text-white text-center relative overflow-hidden">
+                        <span class="text-6xl block mb-2 animate-bounce-subtle">🏖️</span>
+                        <h3 class="text-2xl font-black">Los Roques y Morrocoy</h3>
+                        <span class="inline-block bg-sky-800/60 text-xs px-3 py-1 rounded-full font-bold mt-1">Playas Cristalinas</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <p class="text-slate-700 text-base md:text-lg font-medium">
+                            Aguas azulitas y transparentes con arena suave 🏖️. Un mundo bajo el agua lleno de arrecifes de coral y estrellas de mar.
+                        </p>
+                        <div class="bg-sky-50 p-4 rounded-2xl border-2 border-sky-200">
+                            <span class="font-bold text-sky-900 block text-sm">🐠 Habitantes y secretos:</span>
+                            <span class="text-sky-800 font-bold">Peces de mil colores, Tortugas marinas, Pelícanos y Langostas.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: MÉDANOS DE CORO -->
+                <div class="eco-card eco-item desierto bg-white rounded-3xl overflow-hidden border-4 border-amber-300 shadow-xl flex flex-col">
+                    <div class="bg-gradient-to-r from-amber-400 to-yellow-500 p-6 text-amber-950 text-center relative overflow-hidden">
+                        <span class="text-6xl block mb-2 animate-bounce-subtle">🏜️</span>
+                        <h3 class="text-2xl font-black">Médanos de Coro</h3>
+                        <span class="inline-block bg-amber-800/20 text-xs px-3 py-1 rounded-full font-bold mt-1">¡Montañas de Arena Dorada!</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <p class="text-slate-700 text-base md:text-lg font-medium">
+                            ¡Un gran desierto donde puedes rodar por las dunas de arena! 🏜️ El brisote cambia las montañas de forma todo el tiempo.
+                        </p>
+                        <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200">
+                            <span class="font-bold text-amber-900 block text-sm">🦎 Habitantes y secretos:</span>
+                            <span class="text-amber-800 font-bold">Lagartijas muy veloces, Cactus verdes y Chivitos juguetones.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4: LOS ANDES Y EL PÁRAMO -->
+                <div class="eco-card eco-item andes bg-white rounded-3xl overflow-hidden border-4 border-blue-300 shadow-xl flex flex-col">
+                    <div class="bg-gradient-to-r from-indigo-500 to-blue-600 p-6 text-white text-center relative overflow-hidden">
+                        <span class="text-6xl block mb-2 animate-bounce-subtle">🏔️</span>
+                        <h3 class="text-2xl font-black">Los Andes y Páramos</h3>
+                        <span class="inline-block bg-indigo-900/60 text-xs px-3 py-1 rounded-full font-bold mt-1">¡Montañas Frías con Nieve!</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <p class="text-slate-700 text-base md:text-lg font-medium">
+                            Montañas muy altas donde hace mucho frío ❄️. Crece el suavecito **Frailejón** que guarda el agua limpia de la montaña.
+                        </p>
+                        <div class="bg-indigo-50 p-4 rounded-2xl border-2 border-indigo-200">
+                            <span class="font-bold text-indigo-900 block text-sm">🐻 Habitantes y secretos:</span>
+                            <span class="text-indigo-800 font-bold">El Oso Frontino (¡con manchas de anteojos!) y el gran Cóndor de los Andes.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 5: LOS LLANOS VENEZOLANOS -->
+                <div class="eco-card eco-item llanos bg-white rounded-3xl overflow-hidden border-4 border-emerald-400 shadow-xl flex flex-col lg:col-span-2">
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 p-6 text-white text-center relative overflow-hidden">
+                        <span class="text-6xl block mb-2 animate-bounce-subtle">🌾</span>
+                        <h3 class="text-2xl font-black">Los Llanos Venezolanos</h3>
+                        <span class="inline-block bg-teal-900/60 text-xs px-3 py-1 rounded-full font-bold mt-1">¡Sabanas Infinitas y Ríos Grandes!</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <p class="text-slate-700 text-base md:text-lg font-medium">
+                            Campos verdes e infinitos llenos de hierba, grandes ríos y hermosos atardeceres. En invierno se llena de agua y nadan miles de animales.
+                        </p>
+                        <div class="bg-teal-50 p-4 rounded-2xl border-2 border-teal-200 grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <span class="font-bold text-teal-900 block text-sm">🐹 Habitantes amigables:</span>
+                                <span class="text-teal-800 font-bold">Manadas de Chigüires y Garzas blancas.</span>
+                            </div>
+                            <div>
+                                <span class="font-bold text-teal-900 block text-sm">🐊 Reyes del río:</span>
+                                <span class="text-teal-800 font-bold">El Caimán del Orinoco y las Corocoras rojas.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 3: ANIMALES EMBLEMÁTICOS (GALERÍA INTERACTIVA DE AMIGUITOS) -->
+    <section id="animales" class="py-16 bg-white relative">
+        <div class="max-w-6xl mx-auto px-4">
+            
+            <div class="text-center mb-10">
+                <span class="bg-pink-200 text-pink-900 font-extrabold text-sm md:text-base px-4 py-2 rounded-full border-2 border-pink-400 uppercase tracking-wider">
+                    🐾 Amiguitos Peludos y Plumudos
+                </span>
+                <h2 class="text-3xl md:text-5xl font-black text-emerald-950 mt-4">
+                    Amiguitos de la Fauna Venezolana 🇻🇪
+                </h2>
+                <p class="text-lg md:text-xl text-slate-600 font-bold mt-2">
+                    👇 ¡Haz clic sobre un amiguito para descubrir su ficha secreta!
+                </p>
+            </div>
+
+            <!-- Animal Cards Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
+                
+                <!-- Animal 1: Turpial -->
+                <button onclick="showAnimalInfo('turpial')" class="animal-card-btn bg-amber-50 hover:bg-amber-100 p-5 rounded-3xl border-4 border-amber-300 shadow-lg text-center cursor-pointer transition transform hover:scale-105 active:scale-95 flex flex-col items-center">
+                    <span class="text-6xl mb-2 animate-bounce-subtle">🐤</span>
+                    <h3 class="text-lg font-black text-amber-900">Turpialín</h3>
+                    <span class="mt-2 text-xs bg-amber-200 text-amber-900 font-black px-3 py-1 rounded-full">¡Tócame! ✨</span>
+                </button>
+
+                <!-- Animal 2: Guacamaya -->
+                <button onclick="showAnimalInfo('guacamaya')" class="animal-card-btn bg-rose-50 hover:bg-rose-100 p-5 rounded-3xl border-4 border-rose-300 shadow-lg text-center cursor-pointer transition transform hover:scale-105 active:scale-95 flex flex-col items-center">
+                    <span class="text-6xl mb-2 animate-bounce-subtle">🦜</span>
+                    <h3 class="text-lg font-black text-rose-900">Guaca</h3>
+                    <span class="mt-2 text-xs bg-rose-200 text-rose-900 font-black px-3 py-1 rounded-full">¡Tócame! ✨</span>
+                </button>
+
+                <!-- Animal 3: Chigüire -->
+                <button onclick="showAnimalInfo('chiguire')" class="animal-card-btn bg-emerald-50 hover:bg-emerald-100 p-5 rounded-3xl border-4 border-emerald-300 shadow-lg text-center cursor-pointer transition transform hover:scale-105 active:scale-95 flex flex-col items-center">
+                    <span class="text-6xl mb-2 animate-bounce-subtle">🐹</span>
+                    <h3 class="text-lg font-black text-emerald-900">Chiri</h3>
+                    <span class="mt-2 text-xs bg-emerald-200 text-emerald-900 font-black px-3 py-1 rounded-full">¡Tócame! ✨</span>
+                </button>
+
+                <!-- Animal 4: Oso Frontino -->
+                <button onclick="showAnimalInfo('oso')" class="animal-card-btn bg-indigo-50 hover:bg-indigo-100 p-5 rounded-3xl border-4 border-indigo-300 shadow-lg text-center cursor-pointer transition transform hover:scale-105 active:scale-95 flex flex-col items-center">
+                    <span class="text-6xl mb-2 animate-bounce-subtle">🐻</span>
+                    <h3 class="text-lg font-black text-indigo-900">Oso Frontino</h3>
+                    <span class="mt-2 text-xs bg-indigo-200 text-indigo-900 font-black px-3 py-1 rounded-full">¡Tócame! ✨</span>
+                </button>
+
+                <!-- Animal 5: Tonina -->
+                <button onclick="showAnimalInfo('tonina')" class="animal-card-btn bg-pink-50 hover:bg-pink-100 p-5 rounded-3xl border-4 border-pink-300 shadow-lg text-center cursor-pointer transition transform hover:scale-105 active:scale-95 flex flex-col items-center">
+                    <span class="text-6xl mb-2 animate-bounce-subtle">🐬</span>
+                    <h3 class="text-lg font-black text-pink-900">Tonina</h3>
+                    <span class="mt-2 text-xs bg-pink-200 text-pink-900 font-black px-3 py-1 rounded-full">¡Tócame! ✨</span>
+                </button>
+
+                <!-- Animal 6: Flamenco -->
+                <button onclick="showAnimalInfo('flamenco')" class="animal-card-btn bg-orange-50 hover:bg-orange-100 p-5 rounded-3xl border-4 border-orange-300 shadow-lg text-center cursor-pointer transition transform hover:scale-105 active:scale-95 flex flex-col items-center">
+                    <span class="text-6xl mb-2 animate-bounce-subtle">🦩</span>
+                    <h3 class="text-lg font-black text-orange-900">Flamenqui</h3>
+                    <span class="mt-2 text-xs bg-orange-200 text-orange-900 font-black px-3 py-1 rounded-full">¡Tócame! ✨</span>
+                </button>
+
+            </div>
+
+            <!-- ANIMAL DISPLAY PANEL DETALLADO -->
+            <div id="animal-display-panel" class="mt-10 p-6 md:p-8 rounded-3xl border-4 shadow-2xl transition-all duration-300 hidden">
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <span id="ani-icon" class="text-8xl p-4 bg-white/80 rounded-3xl border-4 border-white shadow-inner animate-bounce-subtle"></span>
+                    
+                    <div class="flex-1 space-y-3 text-center md:text-left">
+                        <div class="flex justify-between items-center">
+                            <h3 id="ani-name" class="text-3xl md:text-4xl font-black"></h3>
+                            <button onclick="closeAnimalInfo()" class="text-gray-400 hover:text-gray-600 font-bold bg-white rounded-full w-10 h-10 border-2 border-gray-300 flex items-center justify-center text-xl shadow">✕</button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                            <div class="bg-white/90 p-3 rounded-2xl border-2 border-slate-200">
+                                <span class="text-xs font-black uppercase text-slate-400 block">🏡 Ecosistema</span>
+                                <span id="ani-eco" class="font-extrabold text-slate-800 text-base md:text-lg"></span>
+                            </div>
+                            <div class="bg-white/90 p-3 rounded-2xl border-2 border-slate-200">
+                                <span class="text-xs font-black uppercase text-slate-400 block">🍎 ¿Qué come?</span>
+                                <span id="ani-food" class="font-extrabold text-slate-800 text-base md:text-lg"></span>
+                            </div>
+                            <div class="bg-white/90 p-3 rounded-2xl border-2 border-slate-200">
+                                <span class="text-xs font-black uppercase text-slate-400 block">✨ Dato Curioso</span>
+                                <span id="ani-secret" class="font-extrabold text-slate-800 text-base md:text-lg"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 4: CONVIÉRTETE EN GUARDIÁN DE LA NATURALEZA -->
+    <section id="mision" class="py-16 bg-gradient-to-r from-emerald-600 to-teal-700 text-white relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 relative z-10">
+            
+            <div class="text-center mb-12">
+                <span class="bg-yellow-400 text-amber-950 font-black text-sm md:text-base px-6 py-2 rounded-full border-2 border-yellow-200 shadow">
+                    🛡️ Misión Secreta
+                </span>
+                <h2 class="text-3xl md:text-5xl font-black mt-4 drop-shadow">
+                    ¡Conviértete en Guardián de la Naturaleza! 🦸‍♀️🦸‍♂️
+                </h2>
+                <p class="text-lg md:text-xl text-emerald-100 font-bold mt-2">
+                    3 pasos super sencillos para cuidar nuestro hermoso país:
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Rule 1 -->
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border-4 border-white/20 text-center hover:bg-white/20 transition">
+                    <span class="text-6xl block mb-3 animate-float">🗑️</span>
+                    <h3 class="text-2xl font-black text-yellow-300 mb-2">1. Basura en su lugar</h3>
+                    <p class="text-emerald-50 text-base font-semibold">
+                        ¡Nunca tires basura en la calle ni en la playa! Guárdala y échala en el papelero.
+                    </p>
+                </div>
+
+                <!-- Rule 2 -->
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border-4 border-white/20 text-center hover:bg-white/20 transition">
+                    <span class="text-6xl block mb-3 animate-float" style="animation-delay: 1s;">🚰</span>
+                    <h3 class="text-2xl font-black text-yellow-300 mb-2">2. Ahorra Agua</h3>
+                    <p class="text-emerald-50 text-base font-semibold">
+                        Cierra el grifo mientras te cepillas los dientes. ¡Cada gotita de agua cuenta!
+                    </p>
+                </div>
+
+                <!-- Rule 3 -->
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border-4 border-white/20 text-center hover:bg-white/20 transition">
+                    <span class="text-6xl block mb-3 animate-float" style="animation-delay: 2s;">🌱</span>
+                    <h3 class="text-2xl font-black text-yellow-300 mb-2">3. Cuida las Plantas</h3>
+                    <p class="text-emerald-50 text-base font-semibold">
+                        No rompas las hojitas ni las flores. ¡Ellas le dan oxígeno a nuestro planeta!
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 5: TRIVIA / QUIZ INTERACTIVO PARA NIÑOS -->
+    <section id="quiz" class="py-16 bg-amber-50">
+        <div class="max-w-4xl mx-auto px-4">
+            
+            <div class="text-center mb-10">
+                <span class="bg-pink-200 text-pink-900 font-black text-sm md:text-base px-6 py-2 rounded-full border-2 border-pink-400">
+                    ⭐ ¡Juego Divertido!
+                </span>
+                <h2 class="text-3xl md:text-5xl font-black text-emerald-950 mt-4">
+                    Demuestra lo aprendido 🧠✨
+                </h2>
+                <p class="text-lg md:text-xl text-slate-600 font-bold mt-2">
+                    Responde estas 3 preguntitas para ganar tus Estrellas de Guardián
+                </p>
+            </div>
+
+            <!-- Quiz Box Container -->
+            <div class="bg-white rounded-3xl border-4 border-yellow-400 p-6 md:p-10 shadow-2xl relative">
+                
+                <!-- Score Header -->
+                <div class="flex justify-between items-center mb-8 pb-4 border-b-2 border-slate-100">
+                    <span class="text-lg font-black text-emerald-800" id="quiz-progress">Pregunta 1 de 3</span>
+                    <div class="flex gap-1 text-2xl" id="star-rating">
+                        <span>⭐</span>
+                        <span>⭐</span>
+                        <span>⭐</span>
+                    </div>
+                </div>
+
+                <!-- Question Body -->
+                <div id="quiz-card">
+                    <h3 id="quiz-question" class="text-2xl md:text-3xl font-black text-slate-800 text-center mb-8">
+                        ¿Cómo se llama el ave nacional de Venezuela con plumas amarillas y negras?
+                    </h3>
+
+                    <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Options generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Feedback Display -->
+                <div id="quiz-feedback" class="hidden mt-6 p-4 rounded-2xl text-center font-black text-xl"></div>
+
+                <!-- Final Result Screen -->
+                <div id="quiz-result" class="hidden text-center py-8 space-y-6">
+                    <span class="text-8xl block animate-bounce">🏆</span>
+                    <h3 class="text-4xl font-black text-emerald-900">¡FELICITACIONES! 🎉</h3>
+                    <p class="text-2xl text-slate-700 font-bold">
+                        ¡Eres un verdadero <strong>Guardián de la Naturaleza de Venezuela</strong>! 🇻🇪🌿
+                    </p>
+                    <button onclick="restartQuiz()" class="px-8 py-4 bg-yellow-400 hover:bg-yellow-300 text-amber-950 font-black text-xl rounded-2xl border-b-8 border-yellow-600 shadow-xl transition hover:scale-105">
+                        🔄 ¡Jugar de Nuevo!
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-emerald-950 text-white py-10 text-center border-t-8 border-yellow-400">
+        <div class="max-w-4xl mx-auto px-4 space-y-4">
+            <h3 class="text-2xl font-black text-yellow-300">¡Cuidemos juntos a nuestra hermosa Venezuela!</h3>
+            <div class="pt-4 text-xs text-emerald-400">
+                Hecho por Rafanny Santil con ❤️ para la educación venezolana • 2026
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT INTERACTIVO -->
+    <script>
+        // Animal Data Object for dynamic detailed display
+        const animalsData = {
+            turpial: {
+                name: "Turpialín el Turpial 🐤",
+                icon: "🐤",
+                eco: "Bosques y sabanas cálidas",
+                food: "Frutas dulces e insectos",
+                secret: "¡Es el Ave Nacional de Venezuela y tiene un canto hermosísimo!",
+                theme: "from-amber-100 to-yellow-200 border-amber-400 text-amber-950"
+            },
+            guacamaya: {
+                name: "Guaca la Guacamaya 🦜",
+                icon: "🦜",
+                eco: "La Selva y la ciudad de Caracas",
+                food: "Semillas, frutos y nueces",
+                secret: "¡Vuelan en parejas y sus plumas son amarillas, rojas y azules!",
+                theme: "from-rose-100 to-pink-200 border-rose-400 text-rose-950"
+            },
+            chiguire: {
+                name: "Chiri el Chigüire 🐹",
+                icon: "🐹",
+                eco: "Los Llanos venezolanos",
+                food: "Hierba fresca y plantas de agua",
+                secret: "¡Es el roedor más grande y tranquilo de todo el mundo!",
+                theme: "from-emerald-100 to-teal-200 border-emerald-400 text-emerald-950"
+            },
+            oso: {
+                name: "El Oso Frontino 🐻",
+                icon: "🐻",
+                eco: "Las montañas frías de Los Andes",
+                food: "Plantas, frutas y frailejones",
+                secret: "¡Tiene manchas blancas en los ojos que parecen anteojos mágicos!",
+                theme: "from-indigo-100 to-blue-200 border-indigo-400 text-indigo-950"
+            },
+            tonina: {
+                name: "Tonina la Delfincita 🐬",
+                icon: "🐬",
+                eco: "El gran Río Orinoco",
+                food: "Pececitos del río",
+                secret: "¡Es un delfín de color rosado superjuguetón que vive en agua dulce!",
+                theme: "from-pink-100 to-rose-200 border-pink-400 text-pink-950"
+            },
+            flamenco: {
+                name: "Flamenqui el Flamenco 🦩",
+                icon: "🦩",
+                eco: "Lagunas costeras y playas",
+                food: "Pequeños camaroncitos",
+                secret: "¡Sus plumas son rosadas por comer pequeños camarones de la playa!",
+                theme: "from-orange-100 to-amber-200 border-orange-400 text-orange-950"
+            }
+        };
+
+        function showAnimalInfo(key) {
+            playSound('animal');
+            const data = animalsData[key];
+            const panel = document.getElementById('animal-display-panel');
+            
+            document.getElementById('ani-icon').innerText = data.icon;
+            document.getElementById('ani-name').innerText = data.name;
+            document.getElementById('ani-eco').innerText = data.eco;
+            document.getElementById('ani-food').innerText = data.food;
+            document.getElementById('ani-secret').innerText = data.secret;
+
+            panel.className = `mt-10 p-6 md:p-8 rounded-3xl border-4 shadow-2xl transition-all duration-300 bg-gradient-to-r ${data.theme}`;
+            panel.classList.remove('hidden');
+
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function closeAnimalInfo() {
+            playSound('pop');
+            document.getElementById('animal-display-panel').classList.add('hidden');
+        }
+
+        // Element explanation helper
+        function explainElement(title, desc) {
+            const box = document.getElementById('element-desc');
+            box.innerHTML = `✨ <strong>${title}:</strong> ${desc}`;
+        }
+
+        // Smooth Scroll Helper
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Filter Ecosystems Logic
+        function filterEco(category) {
+            playSound('pop');
+            const items = document.querySelectorAll('.eco-item');
+            const buttons = document.querySelectorAll('.eco-filter-btn');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-800');
+                btn.classList.add('bg-white', 'text-slate-700');
+            });
+            event.currentTarget.classList.remove('bg-white', 'text-slate-700');
+            event.currentTarget.classList.add('bg-emerald-600', 'text-white', 'border-emerald-800');
+
+            items.forEach(item => {
+                if (category === 'todos' || item.classList.contains(category)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // QUIZ DATA AND LOGIC
+        const quizQuestions = [
+            {
+                question: "¿Cómo se llama el ave nacional de Venezuela que tiene plumas amarillas y negras? 🐤",
+                options: [
+                    { text: "El Turpial ✨", correct: true, icon: "🐤" },
+                    { text: "Un Pingüino 🐧", correct: false, icon: "🐧" },
+                    { text: "Un Pato 🦆", correct: false, icon: "🦆" }
+                ],
+                explanation: "¡Correcto! El Turpial es nuestra ave nacional. 🇻🇪"
+            },
+            {
+                question: "¿En qué lugar de Venezuela hace mucho frío y vive el Oso Frontino? 🏔️",
+                options: [
+                    { text: "En la Playa 🏖️", correct: false, icon: "🏖️" },
+                    { text: "Los Andes / Páramo 🏔️", correct: true, icon: "🏔️" },
+                    { text: "En el Desierto 🏜️", correct: false, icon: "🏜️" }
+                ],
+                explanation: "¡Exacto! Los Andes son las montañas más frías de Venezuela. ❄️"
+            },
+            {
+                question: "¿Qué debemos hacer para ser Buenos Guardianes de la Naturaleza? 🛡️",
+                options: [
+                    { text: "Tirar basura a los ríos 🚮", correct: false, icon: "🚮" },
+                    { text: "Cuidar el agua y las plantas 🌱", correct: true, icon: "🌱" },
+                    { text: "Romper las flores 🌸", correct: false, icon: "🌸" }
+                ],
+                explanation: "¡Muy bien! Debemos cuidar el agua, las plantas y a los animales. 💚"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const q = quizQuestions[currentQuestion];
+            document.getElementById('quiz-progress').innerText = `Pregunta ${currentQuestion + 1} de 3`;
+            document.getElementById('quiz-question').innerText = q.question;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-5 bg-emerald-50 hover:bg-yellow-100 border-4 border-emerald-200 hover:border-yellow-400 rounded-2xl font-black text-xl text-emerald-950 transition transform hover:-translate-y-1 flex flex-col items-center gap-2 shadow";
+                btn.innerHTML = `<span class="text-4xl">${opt.icon}</span> <span>${opt.text}</span>`;
+                btn.onclick = () => selectAnswer(opt.correct, q.explanation);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').classList.add('hidden');
+        }
+
+        function selectAnswer(isCorrect, explanation) {
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+
+            if (isCorrect) {
+                playSound('correct');
+                score++;
+                feedback.className = "mt-6 p-4 rounded-2xl text-center font-black text-xl bg-green-100 text-green-900 border-4 border-green-400";
+                feedback.innerText = `¡SI! 🎉 ${explanation}`;
+                
+                try {
+                    confetti({
+                        particleCount: 80,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                } catch(e){}
+
+                setTimeout(() => {
+                    currentQuestion++;
+                    if (currentQuestion < quizQuestions.length) {
+                        loadQuestion();
+                    } else {
+                        showQuizResult();
+                    }
+                }, 2000);
+
+            } else {
+                playSound('wrong');
+                feedback.className = "mt-6 p-4 rounded-2xl text-center font-black text-xl bg-rose-100 text-rose-900 border-4 border-rose-400";
+                feedback.innerText = "¡Inténtalo de nuevo amiguito! 🧠💪";
+            }
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-card').classList.add('hidden');
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            
+            try {
+                confetti({
+                    particleCount: 150,
+                    spread: 100,
+                    origin: { y: 0.4 }
+                });
+            } catch(e){}
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quiz-card').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            loadQuestion();
+        }
+
+        window.onload = function() {
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>
